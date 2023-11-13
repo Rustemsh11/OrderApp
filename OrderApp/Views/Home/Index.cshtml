@@ -1,0 +1,121 @@
+﻿@model IEnumerable<OrderApp.Shared.OrderViewModel>
+
+
+    <style>
+        .idOrder{
+            visibility: hidden
+        }
+    </style>
+
+
+    <h1>Заказы</h1>
+
+    <form class="createOrder" action="Home/CreateOrder">
+        <input type="submit" class="createButton" value="Создать заказ" />
+    </form>
+
+    <form id="filter-form">
+        <label for="from-date">От:</label>
+        <input type="date" id="from-date" name="fromDate">
+        <label for="to-date">До:</label>
+        <input type="date" id="to-date" name="toDate">
+        <input type="submit" class="filter" value="Фильтр">
+    </form>
+
+    <table id="orders-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Номер заказа</th>
+                <th>Дата заказа</th>
+                <th>Поставщик</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="tableRow">
+                    <td class="idOrder">@item.Id</td>
+                    <td>@item.Number</td>
+                    <td>@item.Date</td>
+                    <td>@item.ProviderName</td>
+                </tr>            
+            }
+           
+        </tbody>
+    </table>
+
+    <script>
+        const filterForm = document.getElementById('filter-form');
+        const ordersTable = document.getElementById('orders-table');
+        let fromDateInput = document.getElementById('from-date');
+        let toDateInput = document.getElementById('to-date');
+        const createButton = document.querySelector('.createOrder');
+        const table = document.querySelector('#orders-table');
+        const rows = table.getElementsByTagName('tr');
+        
+        Array.from(rows).forEach((row, index)=>{
+            row.addEventListener('dblclick', (event)=>{
+                event.preventDefault();
+                const cell = row.getElementsByTagName('td');
+                const ID = parseInt(cell[0].innerHTML);
+                //fetch(`/Home/GetOrderDetails?id=${id}`, {method: 'get'})
+                window.location.href = '@Url.Action("GetOrderDetails", "QueryDetails")?id=' + ID
+                //var xhttp = new XMLHttpRequest();
+                //xhttp.open("GET", `/Home/GetOrderDetails?id=${ID}`, true);
+                //xhttp.send();
+            });
+        })
+        
+
+        //createButton.addEventListener('click', (event)=>{
+        //    event.preventDefault();
+        //    fetch('/Home/CreateOrder');
+        //});
+
+        
+
+        filterForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const fromDate = new Date(fromDateInput.value);
+            const toDate = new Date(toDateInput.value);
+
+            const tbody = ordersTable.querySelector('tbody');
+            const rows = tbody.querySelectorAll('tr');
+
+            rows.forEach(function (row) {
+                const orderDate = new Date(row.cells[3].textContent);
+
+                if (orderDate >= fromDate && orderDate <= toDate) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+
+    </script>
+
+@*
+<div class="text-center">
+    <div class="row" id="filterDiv">
+        <div class="col-2" id="startDateFilter">
+            <p>C       <input type="date" /></p>
+            
+        </div>
+        
+        <div class="col-2" id="startDateFilter">
+            <p>По</p>
+            <input type="date" />
+        </div>
+        <div class="col-2">
+            <input type="button" value="Найти"/>
+        </div>
+    </div>
+    <table>
+
+    </table>
+</div>
+*@

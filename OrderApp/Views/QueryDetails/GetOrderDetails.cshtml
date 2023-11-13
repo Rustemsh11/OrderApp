@@ -1,0 +1,109 @@
+﻿@model List<OrderApp.Entity.Models.OrderItem>
+
+
+<h1>Детали заказа</h1>
+<button class="btn btn-primary" id="editButton">Редактировать</button>
+<button class="btn btn-success" id="saveButton">Сохранить</button>
+<form>
+    <table id="orders-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Номер заказа</th>
+                <th>Наименование</th>
+                <th>Количество</th>
+                <th>Ед.изм</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model)
+            {
+                <tr class="tableRow">
+                    <td><input type="hidden" id="id" value="@item.Id" /></td>
+                    <td class="editTd" id="orderNumber">@item.Order.Number</td>
+                    <td class="editTd" id="name">@item.Name</td>
+                    <td class="editTd" id="quantity">@item.Quantity</td>
+                    <td class="editTd" id="unit">@item.Unit</td>
+                    <td><button class="btn btn-danger"><a  asp-action="DeleteQueryDetail" asp-controller="QueryDetails" asp-route-queryDetailId="@item.Id"  asp-route-orderId="@item.OrderId">Удалить</a></button></td>
+                </tr>                
+            }
+        </tbody>
+    </table>
+
+</form>
+<script>
+    const editButton = document.querySelector('#editButton');
+    const saveButton = document.querySelector('#saveButton');
+    let tds = document.querySelectorAll('.editTd');
+
+    editButton.addEventListener('click', (e)=>{
+        e.preventDefault();
+        MakeEdit();
+    });
+
+    saveButton.addEventListener('click',  (e)=>{
+        e.preventDefault();
+        let input = document.querySelectorAll('.editInput');
+        if(input.length!=0){
+            for (var i = 0; i < tds.length; i++) {
+                tds[i].innerHTML = input[i].value;
+            }
+        }
+
+        let rows = document.querySelectorAll('.tableRow');
+        let hiddenId = document.querySelectorAll('#id');
+        let orderItems = [];      
+        let counter = 0;
+        for(let row of rows){
+            let item = {};
+            let cells = row.querySelectorAll('td');
+            
+            item.Id = hiddenId[counter++].value;
+            item.OrderId = cells[1].innerHTML;
+            item.Name = cells[2].innerHTML;
+            item.Quantity = cells[3].innerHTML;
+            item.Unit = cells[4].innerHTML;
+            orderItems.push(item);
+           
+        }
+      
+        // $.ajax({
+        //     type: 'POST',
+        //     url: '/QueryDetails/EditQueryDetails',
+        //     dataType: 'json',
+        //     contentType: 'application/json;charset=utf-8',
+        //     data: data,
+        //     success: function (result) {
+        //         console.log('Data received: ');
+        //         console.log(result);
+        //     }
+        // });
+        // let response = await fetch('/QueryDetails/EditQueryDetail', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json;charset=utf-8'
+        //     },            
+        //     body: JSON.stringify(orderItems)
+        // });
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/QueryDetails/EditQueryDetail');
+        xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        xhr.send(JSON.stringify(orderItems));
+    });
+
+
+
+    function MakeEdit(){
+
+        for(var i=0; i<tds.length; i++){
+           var input = document.createElement('input');
+           input.className = "editInput";
+           input.value = tds[i].innerText;
+           tds[i].innerHTML = '';
+           tds[i].appendChild(input);
+        };
+        
+    }
+
+</script>

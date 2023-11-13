@@ -1,0 +1,362 @@
+﻿@model List<OrderApp.Shared.OrderForCreateViewModel>;
+<style>
+
+    
+
+    input[type=text] {
+        width: 100%;
+        padding: 12px 5px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 3px solid #ccc;
+        -webkit-transition: 0.5s;
+        transition: 0.5s;
+        outline: none;
+        background: #E0FFFF;
+    }
+
+    input[type=number] {
+        width: 100%;
+        padding: 12px 5px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 3px solid #ccc;
+        -webkit-transition: 0.5s;
+        transition: 0.5s;
+        outline: none;
+        background: #E0FFFF;
+    }
+
+    #select {
+        width: 100%;
+        padding: 12px 5px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 3px solid #ccc;
+        -webkit-transition: 0.5s;
+        transition: 0.5s;
+        outline: none;
+        background: #E0FFFF;
+    }
+
+    input[type=date] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 3px solid #ccc;
+        -webkit-transition: 0.5s;
+        transition: 0.5s;
+        outline: none;
+        background: #E0FFFF;
+    }
+    
+    /*#btnSave{
+        position:relative;
+        top: 500px;
+        left: 300px;
+    }
+       */
+
+</style>
+
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <div class="col-1">
+            <a id="backToMain" asp-action="Main" asp-controller="Prorab">
+
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z" />
+                </svg>
+            </a>
+        </div>
+        <div class="col">
+            <h1 id="title" class="display-5">Создать заявку</h1>
+        </div>
+        <hr class="border border-primary border-3 opacity-75">
+    </div>
+    </br>
+    <div class="row orderDetail">
+        <div class="col">
+            <label>Номер заказа</label>
+            <input type="number" id="number" />
+        </div>
+        <div class="col">
+            <label>Дата</label>
+            <input type="date" id="date" />
+        </div>
+        <div class="col">
+            <label>Постващик</label>
+            <select id="ddList" asp-items="@ViewBag.Providers" class="form-select" aria-label="Default select example">
+                <option selected>Выберите категорию</option>
+            </select>
+        </div>
+    </div>
+    <h1>Детали заказа</h1>
+    <hr class="border border-primary border-3 opacity-75">
+
+    <table id="tblQuery" class="table">
+
+        <thead>
+
+            <tr>
+                <th>Наименование</th>
+                <th>Количество</th>
+                <th>Ед.измерения</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>
+                    <input type="text" id="Name" />
+                </td>
+                <td>
+                    <input type="number" id="Quantity" />
+                </td>
+                <td>
+                    <input type="text" id="Mesure" />
+                </td>               
+                <td>
+                    <input type="button" class="btn btn-primary" style="padding: 12px 20px; margin: 8px 0;" id="btnAdd" value="Add" />
+                </td>
+
+            </tr>
+        </tfoot>
+    </table>
+    <div>
+
+        <input type="button" id="btnSave" class="btn  btn-primary position-absolute bottom-0 start-50 translate-middle " value="Создать Заказ" />
+    </div>
+</div>
+
+@section Scripts
+    {      
+
+    <script type="text/javascript">
+        $("body").on("click", "#btnAdd", function () {
+            //Reference the Name and Country TextBoxes.
+            var number = document.querySelector("#number");
+            //var postavchik = document.getElementById("#ddList");
+            var date = document.querySelector("#date");
+            var Name = $("#Name");
+            var Quantity = $("#Quantity");
+            var Mesure = $("#Mesure");
+            
+
+            //$("#pets option:selected").text()
+            //Get the reference of the Table's TBODY element.
+            var tBody = $("#tblQuery > TBODY")[0];
+
+            //Add Row.
+            var row = tBody.insertRow(-1);
+
+            //Add Material cell.
+            //var cell = $(row.insertCell(-1));
+            //cell.html(Catalog.val());
+
+            
+            //Add Name cell.
+            cell = $(row.insertCell(-1));
+            cell.html(Name.val());
+
+            //Add Measure cell.
+            cell = $(row.insertCell(-1));
+            cell.html(Quantity.val());
+
+            //Add Count cell.
+            cell = $(row.insertCell(-1));
+            cell.html(Mesure.val());
+
+           
+
+            //Add Button cell.
+            cell = $(row.insertCell(-1));
+            var btnRemove = $("<input />");
+            btnRemove.attr("type", "button");
+            btnRemove.attr("onclick", "Remove(this);");
+            btnRemove.attr("class", "btn btn-danger");
+            btnRemove.val("Remove");
+            cell.append(btnRemove);
+
+            //Clear the TextBoxes
+            
+            Name.val("");
+            Mesure.val("");
+            Quantity.val("");       
+
+        });
+
+        function Remove(button) {
+            //Determine the reference of the Row using the Button.
+            var row = $(button).closest("TR");
+            var name = $("TD", row).eq(2).html();
+            if (confirm("Do you want to delete: " + name)) {
+                //Get the reference of the Table.
+                var table = $("#tblQuery")[0];
+
+                //Delete the Table row using it's Index.
+                table.deleteRow(row[0].rowIndex);
+            }
+        };
+
+        $("body").on("click", "#btnSave", function () {
+            //Loop through the Table rows and build a JSON array.
+            var queries = new Array();
+            $("#tblQuery TBODY TR").each(function () {
+
+                var row = $(this);
+                var query = {};
+                var postavchik = document.getElementById("ddList");
+                query.NumberOrder = number.value;
+                query.Date = date.value;
+                query.ProviderId = postavchik.value;
+                query.Name = $("TD", row).eq(0).html();
+                query.Quantity = $("TD", row).eq(1).html();
+                query.Unit = $("TD", row).eq(2).html();
+
+                queries.push(query);
+            });
+
+
+            $.post('@Url.Action("CreateOrder")', { orderForCreateViewModels: queries });
+            alert("Заявка создана!")
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            $("#loadPartialView").click(function () {
+
+                $.ajax({
+                    url: "MaterialCharacteristic",
+                    type: 'Get',
+                    data: { "materialName": $("#search").val() },
+                    success: function (response) {
+                        $("#part").html(response)
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+@*
+<h1>Создание заказа</h1>
+<br/>
+<div class="row">
+
+    <div class="col-1"></div>
+
+    <div class="col-10 border border-2 border-primary rounded-3">
+        <br />
+        <form  method="post">
+            <div style="margin: 15px;">
+
+                <br />
+                <div class="row">
+
+                    <div class="col">
+
+                        <p>
+                            <label asp-for="NumberOrder">Номер заказа</label><br />
+                            <input type="number" class="number" asp-for="NumberOrder" />
+                        </p>
+                    </div>
+                    <div class="col">
+                        <p>
+                            <label asp-for="Date">Дата</label><br />
+                            <input type="date" class="data" asp-for="Date" />
+                        </p>
+                    </div>
+                    <div class="col">
+                        <label asp-for="ProviderId">Поставщик</label><br />
+                        <select id="select" asp-items="@ViewBag.Providers" asp-for="ProviderId"  class="form-select" aria-label="Default select example">
+                            <option class="postavchik" selected>Выберите поставщика</option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="row">
+
+                    <div class="col">
+                        <p>
+                            <label asp-for="Name">Наименование</label><br />
+                                <input type="text" class="name" asp-for="Name" />
+                        </p>
+                    </div>
+                    <div class="col">
+                        <p>
+                                <label asp-for="Quantity">Количество</label><br />
+                                <input type="number" class="quantity" asp-for="Quantity" />
+                        </p>
+                    </div>
+                    <div class="col">
+
+                            <p>
+                                <label asp-for="Unit">Ед изм.</label><br />
+                                <input type="text" class="unit" asp-for="Unit" />
+                            </p>
+                    </div>
+                </div>
+                <br />                
+                
+                <p class="text-center">
+                    <input type="submit" class="btn btn-outline-primary border border-1 border-primary" id="saveButton" value="Сохранить" />
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="addedRow">
+    <table>
+        <thead>
+            <tr>
+                <th>Номер заказа</th>
+                <th>Наименование</th>
+                <th>Дата</th>
+                <th>Поставщик</th>
+                <th>Количество</th>
+                <th>Ед.изм</th>
+            </tr>
+        </thead>
+        <tbody class="bodyAddedItem">
+           
+        </tbody>
+    </table>
+</div>*@
+@*<script>
+    var orderNumder = document.querySelector('.number');
+    var data = document.querySelector('.data');
+    var postavchik = document.querySelector('.postavchik');
+    var naim = document.querySelector('.name');
+    var quantity = document.querySelector('.quantity');
+    var unit = document.querySelector('.unit');
+
+    var tbody = document.querySelector('.bodyAddedItem');
+
+    var button = document.querySelector('#saveButton');
+
+    button.addEventListener('click', (e)=>{
+        e.preventDefault();
+        var row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${orderNumder.innerText}<td/>
+            <td>${ data.innerText } <td/>
+            < td > ${postavchik.innerText} <td/>
+            < td > ${ naim.innerText } <td/>
+            < td > ${ quantity.innerText } <td/>
+            < td > ${ unit.innerText } <td/>
+        `;
+        tbody.appendChild(row);
+    })
+    
+
+</script>*@
