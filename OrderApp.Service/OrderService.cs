@@ -35,6 +35,16 @@ namespace OrderApp.Service
             return orders;
         }
 
+        public async Task<IEnumerable<Order>> GetAllOrdersWithOrderDetails(bool trackChanges)
+        {
+            var orders = await _repositoryManager.OrderRepository.GetAllOrdersWithOrderDetails(trackChanges);
+            if (orders == null)
+            {
+                throw new NullReferenceException(nameof(orders));
+            }
+            return orders;
+        }
+
         public async Task<Order> GetOrderById(int id, bool trackChanges)
         {
             var order = await _repositoryManager.OrderRepository.GetOrderById(id, trackChanges);

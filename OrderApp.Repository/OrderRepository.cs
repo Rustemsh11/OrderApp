@@ -25,6 +25,13 @@ namespace OrderApp.Repository
             return await FindAll(trackChanges).Include(c=>c.Provider).ToListAsync();
         }
 
+        public async Task<IEnumerable<Order>> GetAllOrdersWithOrderDetails(bool trackChanges)
+        {
+            return await FindAll(trackChanges)
+                .Include(c => c.Provider)
+                .Include(c => c.OrderItems).ToListAsync();
+        }
+
         public async Task<Order> GetOrderById(int id, bool trackChanges)
         {
             return await FindByConditions(c => c.Id == id, trackChanges).SingleOrDefaultAsync();

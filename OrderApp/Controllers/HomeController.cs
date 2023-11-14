@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OrderApp.Entity.Models;
+using OrderApp.Models;
 using OrderApp.Service.Contract;
 using OrderApp.Shared;
 
@@ -18,10 +20,20 @@ namespace OrderApp.Controllers
         }
 
         [HttpGet]
-        public async  Task<IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
+            var fields = new List<FilterModel> {
+                new FilterModel(){Id = 1, Name = "Номер заказа"},
+                new FilterModel(){Id = 2, Name = "Поставщик"},
+                new FilterModel(){Id = 3, Name = "Название товара"},
+                new FilterModel(){Id = 4, Name = "Ед. измерения"},
+
+            };      
+            ViewBag.Fields = new SelectList(fields, "Id", "Name");
+            
             var orders =await _serviceManager.OrderService.GetAllOrders(false);
             var orderView = _mapper.Map<IEnumerable<OrderViewModel>>(orders);
+           
             return View(orderView);
         }
 
@@ -43,11 +55,48 @@ namespace OrderApp.Controllers
 
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetOrderDetails(int id)
-        //{
-        //    var order = await _serviceManager.OrderItemService.GetOrderItemsByOrderId(id, trackChanges:true);
-        //    return View(order);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> Filter(int filedId, string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                var orders = await _serviceManager.OrderService.GetAllOrders(false);
+                var orderView = _mapper.Map<IEnumerable<OrderViewModel>>(orders);
+                return PartialView("TableOrdersView", orderView);
+            }
+            else if (filedId == 1)
+            {
+                var orders = await _serviceManager.OrderService.GetAllOrders(false);
+                var filterOrder = orders.Where(c => c.Number == value).ToList();
+                var orderView = _mapper.Map<IEnumerable<OrderViewModel>>(filterOrder);
+                return PartialView("TableOrdersView", orderView);
+            }
+            else if (filedId == 2)
+            {
+                var orders = await _serviceManager.OrderService.GetAllOrders(false);
+                var filterOrder = orders.Where(c => c.Provider.Name.ToLower().Contains(value.ToLower())).ToList();
+                var orderView = _mapper.Map<IEnumerable<OrderViewModel>>(filterOrder);
+                return PartialView("TableOrdersView", orderView);
+            }
+            else if(filedId == 3)
+            {
+                var ordersItems = await _serviceManager.OrderItemService.GetAllOrderItems(false);
+                var filterOrderItems = ordersItems.Where(c=>c.Name.ToLower().Contains(value.ToLower())).Select(c=>c.Order).DistinctBy(c=>c.Number).ToList();
+                
+                var orderView = _mapper.Map<IEnumerable<OrderViewModel>>(filterOrderItems);
+                return PartialView("TableOrdersView", orderView);
+            }
+            else 
+            {
+                var ordersItems = await _serviceManager.OrderItemService.GetAllOrderItems(false);
+                var filterOrderItems = ordersItems.Where(c=>c.Unit.ToLower().Contains(value.ToLower())).Select(c=>c.Order).DistinctBy(c => c.Number).ToList();
+                
+                var orderView = _mapper.Map<IEnumerable<OrderViewModel>>(filterOrderItems);
+                return PartialView("TableOrdersView", orderView);
+            }
+           
+        }
+
+        
     }
 }

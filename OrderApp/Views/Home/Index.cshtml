@@ -16,11 +16,26 @@
 
     <form id="filter-form">
         <label for="from-date">От:</label>
-        <input type="date" id="from-date" name="fromDate">
+        <input type="date" id="from-date" name="fromDate" value="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")">
         <label for="to-date">До:</label>
-        <input type="date" id="to-date" name="toDate">
+        <input type="date" id="to-date" name="toDate" value="@DateTime.Now.ToString("yyyy-MM-dd")">
         <input type="submit" class="filter" value="Фильтр">
     </form>
+    
+    <div class="row">
+        <div class="col">
+            <label>Фильтрация по полям</label>
+            <select id="ddList" asp-items="@ViewBag.Fields" class="form-select" aria-label="Default select example">
+                <option selected>Выберите категорию</option>
+            </select>
+        </div>
+        <div class="col">
+            <br/>
+            <input type="text" class="filterValue" />
+            <input type="submit" class="filterByFields"  value="Фильтр" />
+        </div>
+    </div>
+   
 
     <table id="orders-table">
         <thead>
@@ -31,17 +46,8 @@
                 <th>Поставщик</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr class="tableRow">
-                    <td class="idOrder">@item.Id</td>
-                    <td>@item.Number</td>
-                    <td>@item.Date</td>
-                    <td>@item.ProviderName</td>
-                </tr>            
-            }
-           
+        <tbody id="partial">
+            @await Html.PartialAsync("TableOrdersView", Model)
         </tbody>
     </table>
 
@@ -53,8 +59,14 @@
         const createButton = document.querySelector('.createOrder');
         const table = document.querySelector('#orders-table');
         const rows = table.getElementsByTagName('tr');
-        
-        Array.from(rows).forEach((row, index)=>{
+        const fiterButton = document.querySelector('.filterByFields');
+        const filterValue = document.querySelector('.filterValue');
+        const ddList = document.getElementById('ddList');
+        var partial = document.querySelector('#partial');
+
+
+        function setGetOrderItemsEvent(){
+            Array.from(rows).forEach((row, index)=>{
             row.addEventListener('dblclick', (event)=>{
                 event.preventDefault();
                 const cell = row.getElementsByTagName('td');
@@ -66,16 +78,37 @@
                 //xhttp.send();
             });
         })
-        
+        }
 
-        //createButton.addEventListener('click', (event)=>{
-        //    event.preventDefault();
-        //    fetch('/Home/CreateOrder');
-        //});
 
-        
+        setGetOrderItemsEvent();
+        fiterButton.addEventListener('click',(e)=>{
+            e.preventDefault();
 
-        filterForm.addEventListener('submit', function (event) {
+            $.ajax({
+                url: '@Url.Action("Filter","Home")',
+                type: 'GET',
+                data: { filedId: ddList.value, value: filterValue.value },
+                success: function (result) {
+                    $("#partial").html(result);
+                    setGetOrderItemsEvent();
+                }
+            });
+       
+            //With XMLHttpRequest
+
+            //let xhr = new XMLHttpRequest();
+            //xhr.open('GET', `/Home/Filter?filedId=${ddList.value}&value=${filterValue.value}`);
+            //xhr.send();
+            //xhr.onload = function(){
+            //    if(xhr.status == 200){
+            //        var partial = document.querySelector('#partial');
+            //        partial.outerHTML=xhr.response;
+            //    }
+            //}
+        });
+
+    var filterDataEvetn =  function (event) {
             event.preventDefault();
 
             const fromDate = new Date(fromDateInput.value);
@@ -85,7 +118,7 @@
             const rows = tbody.querySelectorAll('tr');
 
             rows.forEach(function (row) {
-                const orderDate = new Date(row.cells[3].textContent);
+                const orderDate = new Date(row.cells[2].textContent);
 
                 if (orderDate >= fromDate && orderDate <= toDate) {
                     row.style.display = '';
@@ -93,29 +126,8 @@
                     row.style.display = 'none';
                 }
             });
-        });
-
-
-    </script>
-
-@*
-<div class="text-center">
-    <div class="row" id="filterDiv">
-        <div class="col-2" id="startDateFilter">
-            <p>C       <input type="date" /></p>
-            
-        </div>
-        
-        <div class="col-2" id="startDateFilter">
-            <p>По</p>
-            <input type="date" />
-        </div>
-        <div class="col-2">
-            <input type="button" value="Найти"/>
-        </div>
-    </div>
-    <table>
-
-    </table>
-</div>
-*@
+        }
+    
+    filterForm.addEventListener('submit', filterDataEvetn);
+  
+</script>

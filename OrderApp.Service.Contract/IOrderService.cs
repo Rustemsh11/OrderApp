@@ -8,6 +8,7 @@ namespace OrderApp.Service.Contract
         Task CreateOrder(OrderForCreateViewModel orderViewModel);
         Task<Order> GetOrderByNumberAndProviderId(string number, int providerId, bool trackChanges);
         Task<IEnumerable<Order>> GetAllOrders(bool trackChanges);
+        Task<IEnumerable<Order>> GetAllOrdersWithOrderDetails(bool trackChanges);
         Task<Order> GetOrderById(int id, bool trackChanges);
     }
 }

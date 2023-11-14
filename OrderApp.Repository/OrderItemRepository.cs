@@ -20,6 +20,11 @@ namespace OrderApp.Repository
             Delete(orderItem);
         }
 
+        public async Task<IEnumerable<OrderItem>> GetAllOrderItems(bool trackChanges)
+        {
+            return await FindAll(trackChanges).Include(c => c.Order).ThenInclude(c=>c.Provider).ToListAsync();
+        }
+
         public async Task<IEnumerable<OrderItem>> GetOrderItemsByOrderId(int orderId, bool trackChanges)
         {
             return await FindByConditions(c => c.OrderId == orderId, trackChanges).Include(c=>c.Order).ToListAsync();

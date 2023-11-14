@@ -1,0 +1,12 @@
+﻿@model IEnumerable<OrderApp.Shared.OrderViewModel>
+
+@foreach (var item in Model)
+{
+    <tr class="tableRow">
+        <td class="idOrder">@item.Id</td>
+        <td>@item.Number</td>
+        <td>@item.Date.ToString("yyyy-MM-dd")</td>
+        <td>@item.ProviderName</td>
+    </tr>
+}
+

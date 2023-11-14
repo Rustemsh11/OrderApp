@@ -11,6 +11,7 @@ namespace OrderApp.Contract
         /// </summary>
         Task<Order> GetOrderByNumberAndProviderIdAsync(string number, int providerId, bool trackChanges);
         Task<IEnumerable<Order>> GetAllOrders(bool trackChanges);
+        Task<IEnumerable<Order>> GetAllOrdersWithOrderDetails(bool trackChanges);
         Task<Order> GetOrderById(int id, bool trackChanges);
         void DeleteOrder(Order order);
     }

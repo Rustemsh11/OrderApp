@@ -13,6 +13,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Text.Json" Version="7.0.3" />
   </ItemGroup>
@@ -21,10 +22,6 @@
     <ProjectReference Include="..\OrderApp.Repository\OrderApp.Repository.csproj" />
     <ProjectReference Include="..\OrderApp.Service.Contract\OrderApp.Service.Contract.csproj" />
     <ProjectReference Include="..\OrderApp.Service\OrderApp.Service.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

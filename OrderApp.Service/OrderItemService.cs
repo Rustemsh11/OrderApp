@@ -3,6 +3,7 @@ using OrderApp.Contract;
 using OrderApp.Entity.Models;
 using OrderApp.Service.Contract;
 using OrderApp.Shared;
+using System.Data;
 using System.Linq;
 
 namespace OrderApp.Service
@@ -31,6 +32,10 @@ namespace OrderApp.Service
             var createdOrder = await _repositoryManager.OrderRepository.GetOrderByNumberAndProviderIdAsync(order.FirstOrDefault().NumberOrder, order.FirstOrDefault().ProviderId, false);
             foreach (var orderItem in order)
             {
+                if(createdOrder.Number == orderItem.Name)
+                {
+                    throw new Exception("Номер заказа и имя детали заказа не может быть одинаковым");
+                }
                 var item = _mapper.Map<OrderItem>(orderItem);
                 item.OrderId = createdOrder.Id;
                 _repositoryManager.OrderItemRepository.CreateOrderItem(item);
@@ -68,6 +73,16 @@ namespace OrderApp.Service
 
             await _repositoryManager.SaveAsync();
             return false;
+        }
+
+        public async Task<IEnumerable<OrderItem>> GetAllOrderItems(bool trackChanges)
+        {
+            var orderItems = await _repositoryManager.OrderItemRepository.GetAllOrderItems(trackChanges);
+            if(orderItems is null)
+            {
+                throw new ArgumentNullException(nameof(orderItems));
+            }
+            return orderItems;
         }
 
         public async Task<IEnumerable<OrderItem>> GetOrderItemsByOrderId(int id, bool trackChanges)

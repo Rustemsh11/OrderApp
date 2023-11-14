@@ -68,24 +68,6 @@
            
         }
       
-        // $.ajax({
-        //     type: 'POST',
-        //     url: '/QueryDetails/EditQueryDetails',
-        //     dataType: 'json',
-        //     contentType: 'application/json;charset=utf-8',
-        //     data: data,
-        //     success: function (result) {
-        //         console.log('Data received: ');
-        //         console.log(result);
-        //     }
-        // });
-        // let response = await fetch('/QueryDetails/EditQueryDetail', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json;charset=utf-8'
-        //     },            
-        //     body: JSON.stringify(orderItems)
-        // });
         let xhr = new XMLHttpRequest();
         xhr.open('POST', '/QueryDetails/EditQueryDetail');
         xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');

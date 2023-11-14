@@ -11,11 +11,9 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
 var app = builder.Build();
 
-
+app.ConfigureExceptionHandler();
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-   
     app.UseHsts();
 }
 
@@ -27,7 +25,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{orderViewModel?}");
 app.Use((context, next) =>
 {
     context.Request.EnableBuffering();
